@@ -2,7 +2,7 @@ var userInfo = [
 	{
 		"name" : "Alejandra",
 		"lastName" : "Sabogal",
-		"mail": "abd@example.com", 
+		"mail": "abi@example.com", 
 		"universityName": "Universidad del Rosario",
 		"isMaster":true,
 		"departmentName": "Jurisprudencia",
@@ -23,31 +23,46 @@ var userInfo = [
 function doLogin (userAccount) {
 	var loginBox = ".cajaLogIn"
 	cy.contains('Ingresar').click()
-	cy.get(loginBox).find('input[name="correo"]').click().type(userAccount.mail);
-	cy.get(loginBox).find('input[name="password"]').click().type(userAccount.password);
+	cy.get(loginBox).find('input[name="correo"]').click().type(userAccount.mail)
+	cy.get(loginBox).find('input[name="password"]').click().type(userAccount.password)
 	cy.get(loginBox).contains('Ingresar').click();
+}
+
+function doLogout () {
+	cy.get(".dropDown").find('button[id="cuenta"]').click()
+	cy.get(".dropdown-menu").contains('Salir').click();
 }
 
 function createAccount (userAccount) {
 	const signUpBox = ".cajaSignUp"
 	cy.contains('Ingresar').click()
-	cy.get(signUpBox).find('input[name="nombre"]').click().type(userAccount.name);
-	cy.get(signUpBox).find('input[name="apellido"]').click().type(userAccount.lastName);
-	cy.get(signUpBox).find('input[name="correo"]').click().type(userAccount.mail);
-	cy.get(signUpBox).find('select[name="idUniversidad"]').select(userAccount.universityName);	
-	cy.get(signUpBox).find('select[name="idDepartamento"]').select(userAccount.departmentName);
-	cy.get(signUpBox).find('input[name="password"]').click().type(userAccount.password);
+	cy.get(signUpBox).find('input[name="nombre"]').click().type(userAccount.name)
+	cy.get(signUpBox).find('input[name="apellido"]').click().type(userAccount.lastName)
+	cy.get(signUpBox).find('input[name="correo"]').click().type(userAccount.mail)
+	cy.get(signUpBox).find('select[name="idUniversidad"]').select(userAccount.universityName)
+	cy.get(signUpBox).find('select[name="idDepartamento"]').select(userAccount.departmentName)
+	cy.get(signUpBox).find('input[name="password"]').click().type(userAccount.password)
 	
 	if(userAccount.acceptTerms){
 		cy.get(signUpBox).find('input[name="acepta"]').click();
 	}
 	
 	cy.get(signUpBox).contains('Registrarse').click();
+}
+
+function assertRegistryMessage(tittle, textMessage){
+	// Validates pop up title
+	cy.get('.sweet-alert')
+	.find('h2')
+	.should('have.text',tittle)
 	
-	// Selects 'OK' on success registry popup
+	// Validates pop up text
+	cy.get('.sweet-alert')
+	.find('div[class="text-muted lead"]')
+	.should('have.text', textMessage)
+	
+	// Does clic on Ok button
 	cy.contains('Ok').click()
-	
-	//TODO: Include the assert
 }
 
 context('Home actions', function() {
@@ -63,15 +78,23 @@ context('Home actions', function() {
 			cy.contains('El correo y la contraseña que ingresaste no figuran en la base de datos. Intenta de nuevo por favor.')
 		})
 		
-		it('Creates an account then to do login', function() {			
+		it('Creates an account twice', function() {			
 			// Create an account
 			createAccount(userInfo[0])
+			assertRegistryMessage(
+				'Registro exitoso!', 
+				`Verifica tu correo y activa tu cuenta Con esto ya podrás calificar profesores.`
+			)
 			
-			// Login with an valid user
-			//doLogin(userAccountInfo)
+			// Logout
+			doLogout()
 			
 			// Create an account with current login
-			createAccount(userInfo[0])
+			createAccount(userInfo[0])			
+			assertRegistryMessage(
+				'Ocurrió un error activando tu cuenta', 
+				`Error: Ya existe un usuario registrado con el correo '${userInfo[0].mail}'`
+			)
 		})
 	})
 
