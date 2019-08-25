@@ -71,7 +71,7 @@ context('Home actions', function() {
 		cy.contains('Cerrar').click()
 	})
   
-	describe.skip('Los estudiantes login', function() {
+	describe('Los estudiantes login', function() {
 		it('Visits los estudiantes and fails at login', function() {			
 			// Does the login
 			doLogin(userInfo[1])
@@ -100,6 +100,21 @@ context('Home actions', function() {
 
 	describe('Teacher´s page actions', function() {
 		it('Visits los estudiantes and look for a teacher', function() {
+			// Does the login
+			doLogin(userInfo[0])
+			
+			// Looks for a teacher
+			const teacherName = "Mario Linares Vasquez"
+			cy.get('#react-select-required_error_checksum--value > div.Select-input > input')
+			.type(teacherName, { force: true })
+			.type('{Enter}');
+			cy.get('div#react-select-required_error_checksum--option-0').eq(0)
+			.should(($item) =>{
+				expect($item).to.contain(teacherName)
+			})
+		})
+		
+		it('Visits los estudiantes and goes for a teacher`s page', function() {
 			// Does the login
 			doLogin(userInfo[0])
 			
