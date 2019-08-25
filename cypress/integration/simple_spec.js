@@ -102,10 +102,22 @@ context('Home actions', function() {
 		it('Visits los estudiantes and look for a teacher', function() {
 			// Does the login
 			doLogin(userInfo[0])
-			// Looks for a teacher
-			cy.get('.buscador').find('div[class="Select-placeholder"]').click().type("Mario Linares");
 			
+			// Looks for a teacher
+			const teacherName = "Mario Linares Vasquez"
+			cy.get('#react-select-required_error_checksum--value > div.Select-input > input')
+			.type(teacherName, { force: true })
+			.type('{Enter}');
+			cy.get('div#react-select-required_error_checksum--option-0').eq(0).click()
+			
+			// Validates teacher name
+			const commonClass = "jsx-1339787052"
+			cy.get('.columnLeft')
+			.find(`div[class='${commonClass} boxElement']`)
+			.find(`div[class='${commonClass} infoProfesor']`)
+			.find(`div[class='${commonClass} descripcionProfesor']`)
+			.find(`h1[class='${commonClass} nombreProfesor']`)
+			.should('have.text', teacherName)
 		})
 	})
 })
-
