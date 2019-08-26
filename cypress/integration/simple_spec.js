@@ -19,7 +19,8 @@ var userInfo = [
 		"acceptTerms": false
 	}
 ];
-
+var teacherName = "Mario Linares Vasquez"
+			
 function doLogin (userAccount) {
 	var loginBox = ".cajaLogIn"
 	cy.contains('Ingresar').click()
@@ -65,13 +66,18 @@ function assertRegistryMessage(tittle, textMessage){
 	cy.contains('Ok').click()
 }
 
+function lookForATeacher(teacherName){
+	cy.get('#react-select-required_error_checksum--value > div.Select-input > input')
+	.type(teacherName, { force: true })
+}
+
 context('Home actions', function() {
 	beforeEach(function() {
 		cy.visit('https://losestudiantes.co')
 		cy.contains('Cerrar').click()
 	})
   
-	describe('Los estudiantes login', function() {
+	describe.skip('Los estudiantes login', function() {
 		it('Visits los estudiantes and fails at login', function() {			
 			// Does the login
 			doLogin(userInfo[1])
@@ -99,30 +105,26 @@ context('Home actions', function() {
 	})
 
 	describe('Teacher´s page actions', function() {
-		it('Visits los estudiantes and look for a teacher', function() {
+		let subject
+			
+		it.skip('Visits los estudiantes and look for a teacher', function() {
 			// Does the login
 			doLogin(userInfo[0])
 			
 			// Looks for a teacher
-			const teacherName = "Mario Linares Vasquez"
-			cy.get('#react-select-required_error_checksum--value > div.Select-input > input')
-			.type(teacherName, { force: true })
-			.type('{Enter}');
+			lookForATeacher(teacherName)
 			cy.get('div#react-select-required_error_checksum--option-0').eq(0)
 			.should(($item) =>{
 				expect($item).to.contain(teacherName)
 			})
 		})
 		
-		it('Visits los estudiantes and goes for a teacher`s page', function() {
+		it.skip('Visits los estudiantes and goes for a teacher`s page', function() {
 			// Does the login
 			doLogin(userInfo[0])
 			
 			// Looks for a teacher
-			const teacherName = "Mario Linares Vasquez"
-			cy.get('#react-select-required_error_checksum--value > div.Select-input > input')
-			.type(teacherName, { force: true })
-			.type('{Enter}');
+			lookForATeacher(teacherName)
 			cy.get('div#react-select-required_error_checksum--option-0').eq(0).click()
 			
 			// Validates teacher name
@@ -133,6 +135,46 @@ context('Home actions', function() {
 			.find(`div[class='${commonClass} descripcionProfesor']`)
 			.find(`h1[class='${commonClass} nombreProfesor']`)
 			.should('have.text', teacherName)
+		})
+		
+		it('Visits los estudiantes and filter by subject', function() {
+			// Does the login
+			doLogin(userInfo[0])
+			
+			// Looks for a teacher
+			lookForATeacher(teacherName)
+			cy.get('div#react-select-required_error_checksum--option-0').eq(0).click()
+			
+			// Selects a random subject
+			const commonClass = '.jsx-3367902293'			
+			cy.get(`${commonClass}`).find('input').its('length').then(($lenght) => {
+				const listElementNumber = Math.floor(Math.random() * $lenght)
+				cy.get(`${commonClass}`).find('input').eq(listElementNumber)
+				.parent().then(($checkbox) => {
+					cy.get($checkbox).find('input').click()
+					cy.get($checkbox).find('a').then(($textElement) => {
+						subject = $textElement.text().trim()
+					})					
+				})
+			})
+			
+			// Validates selection
+			cy.get('div[class="jsx-3672521041"]')
+			.then(($existsComments) => {
+				if ($existsComments.children().length > 0) {
+					cy.get($existsComments)
+					.find('div').eq(0)
+					.find('li:visible')
+					.find('div[class="jsx-1682178024 sobreCalificacion"]')
+					.each(($title) => {
+						cy.get($title)
+						.find('a').eq(0)
+						.should('have.text', subject.replace('.',''))
+					})
+				} else {
+					expect($existsComments.children()).to.have.length(0)
+				}
+			})
 		})
 	})
 })
