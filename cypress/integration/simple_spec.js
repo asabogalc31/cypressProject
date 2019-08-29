@@ -77,7 +77,7 @@ context('Home actions', function() {
 		cy.contains('Cerrar').click()
 	})
   
-	describe.skip('Los estudiantes login', function() {
+	describe('Los estudiantes login', function() {
 		it('Visits los estudiantes and fails at login', function() {			
 			// Does the login
 			doLogin(userInfo[1])
@@ -107,7 +107,7 @@ context('Home actions', function() {
 	describe('Teacher´s page actions', function() {
 		let subject
 			
-		it.skip('Visits los estudiantes and look for a teacher', function() {
+		it('Visits los estudiantes and look for a teacher', function() {
 			// Does the login
 			doLogin(userInfo[0])
 			
@@ -119,7 +119,7 @@ context('Home actions', function() {
 			})
 		})
 		
-		it.skip('Visits los estudiantes and goes for a teacher`s page', function() {
+		it('Visits los estudiantes and goes for a teacher`s page', function() {
 			// Does the login
 			doLogin(userInfo[0])
 			
@@ -159,6 +159,7 @@ context('Home actions', function() {
 			})
 			
 			// Validates selection
+			cy.wait(5000)
 			cy.get('div[class="jsx-3672521041"]')
 			.then(($existsComments) => {
 				if ($existsComments.children().length > 0) {
