@@ -2,7 +2,7 @@ var userInfo = [
 	{
 		"name" : "Alejandra",
 		"lastName" : "Sabogal",
-		"mail": "abi@example.com", 
+		"mail": "aza@example.com", 
 		"universityName": "Universidad del Rosario",
 		"isMaster":true,
 		"departmentName": "Jurisprudencia",
@@ -78,13 +78,16 @@ context('Home actions', function() {
 	})
   
 	describe('Los estudiantes login', function() {
-		it('Visits los estudiantes and fails at login', function() {			
+		it('Visits los estudiantes and fails at login', function() {	
+			cy.screenshot()
 			// Does the login
 			doLogin(userInfo[1])
 			cy.contains('El correo y la contraseña que ingresaste no figuran en la base de datos. Intenta de nuevo por favor.')
+			cy.screenshot()
 		})
 		
 		it('Creates an account twice', function() {			
+			cy.screenshot()
 			// Create an account
 			createAccount(userInfo[0])
 			assertRegistryMessage(
@@ -101,6 +104,7 @@ context('Home actions', function() {
 				'Ocurrió un error activando tu cuenta', 
 				`Error: Ya existe un usuario registrado con el correo '${userInfo[0].mail}'`
 			)
+			cy.screenshot()
 		})
 	})
 
@@ -108,6 +112,7 @@ context('Home actions', function() {
 		let subject
 			
 		it('Visits los estudiantes and look for a teacher', function() {
+			cy.screenshot()
 			// Does the login
 			doLogin(userInfo[0])
 			
@@ -117,9 +122,11 @@ context('Home actions', function() {
 			.should(($item) =>{
 				expect($item).to.contain(teacherName)
 			})
+			cy.screenshot()
 		})
 		
 		it('Visits los estudiantes and goes for a teacher`s page', function() {
+			cy.screenshot()
 			// Does the login
 			doLogin(userInfo[0])
 			
@@ -135,9 +142,11 @@ context('Home actions', function() {
 			.find(`div[class='${commonClass} descripcionProfesor']`)
 			.find(`h1[class='${commonClass} nombreProfesor']`)
 			.should('have.text', teacherName)
+			cy.screenshot()
 		})
 		
 		it('Visits los estudiantes and filter by subject', function() {
+			cy.screenshot()
 			// Does the login
 			doLogin(userInfo[0])
 			
@@ -176,6 +185,7 @@ context('Home actions', function() {
 					expect($existsComments.children()).to.have.length(0)
 				}
 			})
+			cy.screenshot()
 		})
 	})
 })
