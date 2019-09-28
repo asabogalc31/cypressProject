@@ -2,7 +2,7 @@ var userInfo = [
 	{
 		"name" : "Alejandra",
 		"lastName" : "Sabogal",
-		"mail": "aza@example.com", 
+		"mail": "add@example.com", 
 		"universityName": "Universidad del Rosario",
 		"isMaster":true,
 		"departmentName": "Jurisprudencia",
@@ -179,13 +179,14 @@ context('Home actions', function() {
 					.each(($title) => {
 						cy.get($title)
 						.find('a').eq(0)
-						.should('have.text', subject.replace('.',''))
+						.should('have.text', subject.replace('Móvil...','Móviles'))
+						
+						cy.screenshot()
 					})
 				} else {
 					expect($existsComments.children()).to.have.length(0)
 				}
 			})
-			cy.screenshot()
 		})
 	})
 })
